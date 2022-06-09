@@ -1,3 +1,5 @@
+import {isSet} from "util/types";
+
 let users = {
     sarahedo: {
         id: 'sarahedo',
@@ -135,6 +137,29 @@ function generateUID () {
 export function _getUsers () {
     return new Promise((resolve) => {
         setTimeout(() => resolve({...users}), 1000)
+    })
+}
+function validUser(user) {
+    return user.hasOwnProperty('id') && user.hasOwnProperty('password') && user.hasOwnProperty('name')
+}
+
+export function _addUser(user) {
+    return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+            if(!validUser(user)) {
+                reject("Invalid User");
+                return
+            }
+            if(users.hasOwnProperty(user.id)) {
+                reject("User Exists");
+                return;
+            }
+            users={
+                ...users,
+                [user.id]: user
+            }
+            resolve(user);
+        },1000);
     })
 }
 
