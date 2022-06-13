@@ -1,5 +1,3 @@
-import {isSet} from "util/types";
-
 let users = {
     sarahedo: {
         id: 'sarahedo',
@@ -150,13 +148,13 @@ export function _addUser(user) {
                 reject("Invalid User");
                 return
             }
-            if(users.hasOwnProperty(user.id)) {
+            if(users.hasOwnProperty(user.id.toLowerCase())) {
                 reject("User Exists");
                 return;
             }
             users={
                 ...users,
-                [user.id]: user
+                [user.id.toLowerCase()]: user
             }
             resolve(user);
         },1000);

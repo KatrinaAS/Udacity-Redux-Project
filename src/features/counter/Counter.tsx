@@ -10,6 +10,7 @@ import {
   selectCount,
 } from './counterSlice';
 import styles from './Counter.module.css';
+import {createUserAsync} from "../user/userSlice";
 
 export function Counter() {
   const count = useAppSelector(selectCount);
@@ -62,6 +63,14 @@ export function Counter() {
         >
           Add If Odd
         </button>
+        <button className={styles.button}
+                onClick={()=> {
+                  dispatch((createUserAsync({
+                    id:'KatGaea',
+                    password: 'password',
+                    name: 'Katrina Knight'
+                  })));
+                }} >Add User</button>
       </div>
     </div>
   );
