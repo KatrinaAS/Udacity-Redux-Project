@@ -1,4 +1,4 @@
-import Register from "../../features/user/Register";
+import Register from "../../../../features/user/Register";
 
 const RegisterScreen = () => {
     return (

@@ -6,20 +6,24 @@ export interface User {
     password: string,
     name: string,
     avatarURL?: string|null,
-    answers?: Record<string, string>,
-    questions?: Array<string>
+    answers: Record<string, string>,
+    questions: Array<string>
 }
 
 
 export interface UsersState {
-    users: Record<string, User>
+    users: Record<string, User>,
     currentUserId: string,
-    state: LoadingStates
+    state: LoadingStates,
     create: {
         state: LoadingStates
-    }
+    },
     error: {
         message: string|null|undefined
+    },
+    login: {
+        state: LoadingStates
     }
+    redirectURL: string
 
 }

@@ -16,39 +16,38 @@ const RegisterForm = ({onFormSubmit, error,success, loading}: IRegisterFormProps
 
     const submitForm=(event: { preventDefault: () => void; })=>{
         event.preventDefault();
-        const passwordMustMatchConfirmation='Password must match confirmation';
-        const passwordMustHaveLength='Password must be six letters';
-        const usernameRequired='Username is required';
-        const nameRequired='Name is required';
         if(password.value!==password_confirmation.value) {
+            const passwordMustMatchConfirmation='Password must match confirmation';
             setPassword(state=> ({...state, error: passwordMustMatchConfirmation}));
             setPasswordConfirmation(state=> ({...state, error: passwordMustMatchConfirmation}));
 
         } else if(password.value.trim().length < 6) {
-            setPassword(state=> ({...state, error: passwordMustHaveLength}));
+            setPassword(state=> ({...state, error: 'Password must be six letters'}));
         }  else {
             setPassword(state=> ({...state, error: null}));
             setPasswordConfirmation(state=> ({...state, error: null}));
         }
 
         if(username.value.trim()==='') {
-            setUsername(state => ({...state, error: usernameRequired}));
+            setUsername(state => ({...state, error: 'Username is required'}));
         }
         else {
             setUsername(state => ({...state, error: null}));
         }
 
         if(name.value.trim()==='') {
-            setName(state => ({...state, error: nameRequired}));
+            setName(state => ({...state, error: 'Name is required'}));
         } else {
             setName(state => ({...state, error: null}));
         }
 
-        onFormSubmit({
-            username: username.value,
-            password: password.value,
-            name: name.value
-        });
+        if(username.error==null && name.error==null && password.error==null) {
+            onFormSubmit({
+                username: username.value,
+                password: password.value,
+                name: name.value
+            });
+        }
 
     }
 

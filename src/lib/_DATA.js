@@ -141,6 +141,7 @@ function validUser(user) {
     return user.hasOwnProperty('id') && user.hasOwnProperty('password') && user.hasOwnProperty('name')
 }
 
+// fake API add user call
 export function _addUser(user) {
     return new Promise((resolve, reject) => {
         setTimeout(()=>{
@@ -156,9 +157,22 @@ export function _addUser(user) {
                 ...users,
                 [user.id.toLowerCase()]: user
             }
-            resolve(user);
+            resolve({...user});
         },1000);
     })
+}
+
+// fake API login call
+export function _loginUser(loginDetails){
+    return new Promise((resolve,reject) => {
+        setTimeout(()=> {
+            if(!users.hasOwnProperty(loginDetails.username.toLowerCase()))
+                reject("Invalid username or password");
+            if(users[loginDetails.username.toLowerCase()].password!==loginDetails.password)
+                reject("Invalid username or password");
+            resolve({...users[loginDetails.username.toLowerCase()]});
+        },1000);
+    });
 }
 
 export function _getQuestions () {
@@ -194,6 +208,13 @@ export function _saveQuestion (question) {
             questions = {
                 ...questions,
                 [formattedQuestion.id]: formattedQuestion
+            }
+            users ={
+                ...users,
+                [question.author]: {
+                    ...users[question.author],
+                    questions: users[question.author].questions.concat(formattedQuestion.id)
+                }
             }
 
             resolve(formattedQuestion)

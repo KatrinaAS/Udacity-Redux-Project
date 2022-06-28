@@ -1,7 +1,7 @@
 import {User, UsersState} from "./types";
 import {LoadingStates} from "../lib/types";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {_addUser, _getUsers} from "../../lib/_DATA";
+import {_addUser, _getUsers, _loginUser} from "../../lib/_DATA";
 
 
 const initialState = {
@@ -13,7 +13,11 @@ const initialState = {
     },
     error: {
         message: null
-    }
+    },
+    login: {
+        state: LoadingStates.Pending
+    },
+    redirectURL: ""
 } as UsersState;
 
 export const createUserAsync = createAsyncThunk<
@@ -45,10 +49,37 @@ export const loadUsersAsync = createAsyncThunk<Record<string,User>,void,{rejectV
         }
     }
 )
+
+export const loginUserAsync = createAsyncThunk<User,{username: string, password:string}, {rejectValue:string}>(
+    'user/loginUser',
+    async (login: {username: string, password:string},thunkAPI) => {
+        try{
+            return await _loginUser(login);
+        } catch (e) {
+            throw thunkAPI.rejectWithValue(e as string);
+        }
+    }
+)
+
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+        logout: (state, action) => {
+            state.currentUserId=""
+        },
+        chooseQuestion: (state, action:PayloadAction<{questionID: string, choice: "optionOne"|"optionTwo"}>) => {
+            // @ts-ignore
+            state.users[state.currentUserId].answers[action.payload.questionID]=action.payload.choice;
+        },
+        newQuestion: (state, action: PayloadAction<string>) => {
+            state.users[state.currentUserId].questions= state.users[state.currentUserId].questions.concat(action.payload)
+        },
+        setRedirect: (state, {payload}:PayloadAction<string>) => {
+            state.redirectURL=payload;
+        }
+    },
     extraReducers: builder => {
         builder // CreateUserAsync reducers
             .addCase(createUserAsync.pending, (state) => {
@@ -78,9 +109,21 @@ export const userSlice = createSlice({
             .addCase(loadUsersAsync.rejected,(state, action) => {
                 state.state=LoadingStates.Failure
                 state.error.message = action.payload;
+            }) // LoginUserAsync
+            .addCase(loginUserAsync.pending, (state) => {
+                state.login.state=LoadingStates.Requested;
+            })
+            .addCase(loginUserAsync.fulfilled,(state,action:PayloadAction<User>)=> {
+                state.login.state=LoadingStates.Success;
+                state.error.message=null;
+                state.currentUserId=action.payload.id.toLowerCase();
+            })
+            .addCase(loginUserAsync.rejected,(state, action) =>{
+                state.login.state=LoadingStates.Failure;
+                state.error.message=action.payload;
             })
     }
 })
-
+export const { logout, chooseQuestion, setRedirect, newQuestion } = userSlice.actions;
 
 export default userSlice.reducer;

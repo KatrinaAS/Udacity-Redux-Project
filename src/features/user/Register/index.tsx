@@ -1,8 +1,6 @@
 import RegisterForm from "../components/RegisterForm";
 import {Container} from "@mui/material";
 import {User} from "../types";
-import {useAppDispatch} from "../../../app/hooks";
-import {createUserAsync} from "../userSlice";
 import {useNewUser} from "../hooks";
 import {LoadingStates} from "../../lib/types";
 
@@ -13,7 +11,9 @@ const Register = () => {
         const user: User = {
             id: username,
             password: password,
-            name: name
+            name: name,
+            answers: {},
+            questions: []
         }
         registerUser.onSubmit(user);
     }

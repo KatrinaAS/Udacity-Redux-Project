@@ -1,7 +1,13 @@
 import homeImage from './pollImage.jpg'
 import {Card, CardContent, CardMedia, Container, Typography} from "@mui/material";
+import {Outlet} from "react-router-dom";
+import {useContext} from "react";
+import {UserContext} from "../../../features/user/contexts/UserContext";
 
 const Home = () => {
+    const user=useContext(UserContext);
+    if(user!==undefined)
+        return <Outlet />
     return (<Container>
         <Card sx={{m: 2}}>
             <CardMedia
